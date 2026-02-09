@@ -173,12 +173,57 @@
             color: #ff6600;
             font-weight: bold;
         }
+        
+        .btn-check {
+            background: #4a90e2;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 15px;
+            transition: background 0.3s;
+        }
+        
+        .btn-check:hover {
+            background: #357abd;
+        }
+        
+        .devotee-status {
+            display: none;
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+        
+        .devotee-status.found {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+        
+        .devotee-status.not-found {
+            display: block;
+            background: #fff3cd;
+            color: #856404;
+            border: 2px solid #ffeaa7;
+        }
+        
+        .devotee-status.error {
+            display: block;
+            background: #ffe6e6;
+            color: #e74c3c;
+            border: 2px solid #e74c3c;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🕉️ Temple Management System</h1>
+            <h1>\ud83d\udd49\ufe0f Temple Management System</h1>
             <p>Devotee Registration & Service Booking</p>
         </div>
         
@@ -199,6 +244,10 @@
                     <label for="primaryNakshatra">Nakshatra *</label>
                     <input type="text" id="primaryNakshatra" name="primaryNakshatra" required>
                 </div>
+                
+                <button type="button" class="btn-check" onclick="checkExistingDevotee()">\ud83d\udd0d Check if Devotee Exists</button>
+                
+                <div id="devoteeStatus" class="devotee-status"></div>
             </div>
             
             <div class="form-section">
@@ -274,6 +323,108 @@
         
         let familyMemberCount = 0;
         const MAX_FAMILY_MEMBERS = 10;
+        
+        // Mock database of existing devotees
+        const mockDatabase = {
+            'ram_bharadwaja_ashwini': {
+                name: 'Ram Kumar',
+                gotra: 'Bharadwaja',
+                nakshatra: 'Ashwini',
+                familyMembers: [
+                    { name: 'Sita Kumar', nakshatra: 'Rohini' },
+                    { name: 'Lakshman Kumar', nakshatra: 'Mrigashira' }
+                ]
+            },
+            'krishna_kashyapa_rohini': {
+                name: 'Krishna Sharma',
+                gotra: 'Kashyapa',
+                nakshatra: 'Rohini',
+                familyMembers: [
+                    { name: 'Radha Sharma', nakshatra: 'Pushya' },
+                    { name: 'Balaram Sharma', nakshatra: 'Ashlesha' },
+                    { name: 'Subhadra Sharma', nakshatra: 'Magha' }
+                ]
+            },
+            'shiva_atri_ardra': {
+                name: 'Shiva Patel',
+                gotra: 'Atri',
+                nakshatra: 'Ardra',
+                familyMembers: [
+                    { name: 'Parvati Patel', nakshatra: 'Punarvasu' }
+                ]
+            }
+        };
+        
+        function checkExistingDevotee() {
+            const name = document.getElementById('primaryName').value.trim();
+            const gotra = document.getElementById('gotra').value.trim();
+            const nakshatra = document.getElementById('primaryNakshatra').value.trim();
+            const statusDiv = document.getElementById('devoteeStatus');
+            
+            // Clear previous status
+            statusDiv.className = 'devotee-status';
+            statusDiv.textContent = '';
+            
+            // Validate inputs
+            if (!name || !gotra || !nakshatra) {
+                statusDiv.className = 'devotee-status error';
+                statusDiv.textContent = '\u26a0\ufe0f Please fill in Name, Gotra, and Nakshatra before checking.';
+                return;
+            }
+            
+            // Create lookup key
+            const lookupKey = `${name.toLowerCase().split(' ')[0]}_${gotra.toLowerCase()}_${nakshatra.toLowerCase()}`;
+            
+            // Simulate database lookup
+            setTimeout(() => {
+                const devoteeData = mockDatabase[lookupKey];
+                
+                if (devoteeData) {
+                    // Devotee found
+                    statusDiv.className = 'devotee-status found';
+                    statusDiv.innerHTML = `\u2705 <strong>Devotee Found!</strong> Loading family member details...`;
+                    
+                    // Populate family members
+                    setTimeout(() => {
+                        populateFamilyMembers(devoteeData.familyMembers);
+                        statusDiv.innerHTML = `\u2705 <strong>Devotee Found!</strong> ${devoteeData.familyMembers.length} family member(s) loaded.`;
+                    }, 500);
+                } else {
+                    // Devotee not found
+                    statusDiv.className = 'devotee-status not-found';
+                    statusDiv.innerHTML = `\u2139\ufe0f <strong>New Devotee</strong> - No existing record found. You can proceed to add family members manually.`;
+                }
+            }, 800);
+        }
+        
+        function populateFamilyMembers(members) {
+            // Clear existing family members
+            const container = document.getElementById('familyMembersContainer');
+            container.innerHTML = '';
+            familyMemberCount = 0;
+            
+            // Add each family member
+            members.forEach(member => {
+                familyMemberCount++;
+                const memberDiv = document.createElement('div');
+                memberDiv.className = 'family-member';
+                memberDiv.id = `familyMember${familyMemberCount}`;
+                memberDiv.innerHTML = `
+                    <h3>Family Member ${familyMemberCount}</h3>
+                    <div class="row">
+                        <div class="form-group">
+                            <label>Name *</label>
+                            <input type="text" name="familyName${familyMemberCount}" value="${member.name}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nakshatra *</label>
+                            <input type="text" name="familyNakshatra${familyMemberCount}" value="${member.nakshatra}" required>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(memberDiv);
+            });
+        }
         
         function updateSevaAmount() {
             const serviceSelect = document.getElementById('service');
