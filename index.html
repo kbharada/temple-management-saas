@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temple Management - Devotee Registration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff9933 0%, #ffffff 50%, #138808 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #ff6600;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 10px;
+        }
+        
+        .form-section h2 {
+            color: #ff6600;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+        }
+        
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #ff6600;
+        }
+        
+        .family-member {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        .family-member h3 {
+            color: #138808;
+            margin-bottom: 15px;
+            font-size: 1.1em;
+        }
+        
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .btn-add {
+            background: #138808;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        .btn-add:hover {
+            background: #0f6606;
+        }
+        
+        .btn-submit {
+            background: #ff6600;
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .btn-submit:hover {
+            background: #e55a00;
+        }
+        
+        .response-message {
+            display: none;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        
+        .response-message.show {
+            display: block;
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🕉️ Temple Management System</h1>
+            <p>Devotee Registration & Service Booking</p>
+        </div>
+        
+        <form id="devoteeForm">
+            <div class="form-section">
+                <h2>Primary Devotee Information</h2>
+                <div class="form-group">
+                    <label for="primaryName">Name *</label>
+                    <input type="text" id="primaryName" name="primaryName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="gotra">Gotra (Common for all family members) *</label>
+                    <input type="text" id="gotra" name="gotra" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="primaryNakshatra">Nakshatra *</label>
+                    <input type="text" id="primaryNakshatra" name="primaryNakshatra" required>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h2>Family Members (Up to 10)</h2>
+                <div id="familyMembersContainer"></div>
+                <button type="button" class="btn-add" onclick="addFamilyMember()">+ Add Family Member</button>
+            </div>
+            
+            <div class="form-section">
+                <h2>Service Selection</h2>
+                <div class="form-group">
+                    <label for="service">Select Service *</label>
+                    <select id="service" name="service" required>
+                        <option value="">-- Select a Service --</option>
+                        <option value="service1">Service-1</option>
+                        <option value="service2">Service-2</option>
+                        <option value="service3">Service-3</option>
+                        <option value="service4">Service-4</option>
+                        <option value="service5">Service-5</option>
+                        <option value="service6">Service-6</option>
+                        <option value="service7">Service-7</option>
+                        <option value="service8">Service-8</option>
+                        <option value="service9">Service-9</option>
+                        <option value="service10">Service-10</option>
+                    </select>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-submit">Submit Registration</button>
+        </form>
+        
+        <div id="responseMessage" class="response-message"></div>
+    </div>
+
+    <script>
+        let familyMemberCount = 0;
+        const MAX_FAMILY_MEMBERS = 10;
+        
+        function addFamilyMember() {
+            if (familyMemberCount >= MAX_FAMILY_MEMBERS) {
+                alert('Maximum 10 family members allowed');
+                return;
+            }
+            
+            familyMemberCount++;
+            const container = document.getElementById('familyMembersContainer');
+            
+            const memberDiv = document.createElement('div');
+            memberDiv.className = 'family-member';
+            memberDiv.id = `familyMember${familyMemberCount}`;
+            memberDiv.innerHTML = `
+                <h3>Family Member ${familyMemberCount}</h3>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Name *</label>
+                        <input type="text" name="familyName${familyMemberCount}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nakshatra *</label>
+                        <input type="text" name="familyNakshatra${familyMemberCount}" required>
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(memberDiv);
+        }
+        
+        document.getElementById('devoteeForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Collect form data
+            const formData = new FormData(this);
+            const data = {
+                primaryDevotee: {
+                    name: formData.get('primaryName'),
+                    gotra: formData.get('gotra'),
+                    nakshatra: formData.get('primaryNakshatra')
+                },
+                familyMembers: [],
+                service: formData.get('service')
+            };
+            
+            // Collect family members
+            for (let i = 1; i <= familyMemberCount; i++) {
+                const name = formData.get(`familyName${i}`);
+                const nakshatra = formData.get(`familyNakshatra${i}`);
+                if (name && nakshatra) {
+                    data.familyMembers.push({
+                        name: name,
+                        nakshatra: nakshatra,
+                        gotra: data.primaryDevotee.gotra
+                    });
+                }
+            }
+            
+            // Stub response
+            console.log('Form Data:', data);
+            
+            const responseDiv = document.getElementById('responseMessage');
+            responseDiv.textContent = 'OK';
+            responseDiv.classList.add('show');
+            
+            // Hide message after 3 seconds
+            setTimeout(() => {
+                responseDiv.classList.remove('show');
+            }, 3000);
+        });
+    </script>
+</body>
+</html>
