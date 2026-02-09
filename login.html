@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temple Management - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ff9933 0%, #ffffff 50%, #138808 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .login-container {
+            max-width: 450px;
+            width: 100%;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            color: #ff6600;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 1em;
+        }
+        
+        input[type="text"],
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #ff6600;
+        }
+        
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: #ff6600;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .btn-login:hover {
+            background: #e55a00;
+        }
+        
+        .error-message {
+            display: none;
+            padding: 15px;
+            margin-bottom: 20px;
+            background: #ffe6e6;
+            color: #e74c3c;
+            border-radius: 8px;
+            text-align: center;
+            border: 2px solid #e74c3c;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .demo-credentials {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f0f8ff;
+            border-radius: 8px;
+            border: 2px solid #4a90e2;
+        }
+        
+        .demo-credentials h3 {
+            color: #4a90e2;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        .demo-credentials p {
+            color: #666;
+            margin: 5px 0;
+            font-size: 0.95em;
+        }
+        
+        .demo-credentials strong {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="header">
+            <h1>🕉️ Temple Management</h1>
+            <p>Login to Continue</p>
+        </div>
+        
+        <div id="errorMessage" class="error-message"></div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="role">Select Role (Persona)</label>
+                <select id="role" name="role" required>
+                    <option value="">-- Select Your Role --</option>
+                    <option value="superadmin">Persona 1: Super Admin</option>
+                    <option value="admin">Persona 2: Admin</option>
+                    <option value="frontdesk">Persona 3: Front Desk</option>
+                    <option value="volunteer">Persona 4: Volunteer</option>
+                    <option value="library">Persona 5: Library</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn-login">Login</button>
+        </form>
+        
+        <div class="demo-credentials">
+            <h3>Demo Credentials</h3>
+            <p><strong>Username:</strong> abc</p>
+            <p><strong>Password:</strong> 123</p>
+            <p><strong>Access:</strong> Persona 1, 2, or 3 only</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const role = document.getElementById('role').value;
+            const errorDiv = document.getElementById('errorMessage');
+            
+            // Clear previous error
+            errorDiv.classList.remove('show');
+            
+            // Validate credentials
+            if (username !== 'abc' || password !== '123') {
+                errorDiv.textContent = 'Invalid username or password!';
+                errorDiv.classList.add('show');
+                return;
+            }
+            
+            // Check role access
+            if (role === 'superadmin' || role === 'admin' || role === 'frontdesk') {
+                // Store user info in session storage
+                sessionStorage.setItem('username', username);
+                sessionStorage.setItem('role', role);
+                
+                // Redirect to main page
+                window.location.href = 'index.html';
+            } else if (role === 'volunteer' || role === 'library') {
+                errorDiv.textContent = 'Access denied! Only Super Admin, Admin, and Front Desk roles can access the devotee registration system.';
+                errorDiv.classList.add('show');
+            } else {
+                errorDiv.textContent = 'Please select a role!';
+                errorDiv.classList.add('show');
+            }
+        });
+    </script>
+</body>
+</html>

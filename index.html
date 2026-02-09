@@ -152,6 +152,27 @@
             color: #155724;
             border: 2px solid #c3e6cb;
         }
+        
+        .seva-amount {
+            margin-top: 20px;
+            padding: 20px;
+            background: linear-gradient(135deg, #fff5e6 0%, #ffe6cc 100%);
+            border-radius: 10px;
+            border: 2px solid #ff9933;
+            text-align: center;
+        }
+        
+        .amount-label {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .amount-value {
+            font-size: 2.5em;
+            color: #ff6600;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -190,19 +211,24 @@
                 <h2>Service Selection</h2>
                 <div class="form-group">
                     <label for="service">Select Service *</label>
-                    <select id="service" name="service" required>
+                    <select id="service" name="service" required onchange="updateSevaAmount()">
                         <option value="">-- Select a Service --</option>
-                        <option value="service1">Service-1</option>
-                        <option value="service2">Service-2</option>
-                        <option value="service3">Service-3</option>
-                        <option value="service4">Service-4</option>
-                        <option value="service5">Service-5</option>
-                        <option value="service6">Service-6</option>
-                        <option value="service7">Service-7</option>
-                        <option value="service8">Service-8</option>
-                        <option value="service9">Service-9</option>
-                        <option value="service10">Service-10</option>
+                        <option value="service1" data-amount="51">Abhishekam</option>
+                        <option value="service2" data-amount="101">Archana</option>
+                        <option value="service3" data-amount="251">Satyanarayana Pooja</option>
+                        <option value="service4" data-amount="501">Homam</option>
+                        <option value="service5" data-amount="151">Navagraha Pooja</option>
+                        <option value="service6" data-amount="201">Lakshmi Pooja</option>
+                        <option value="service7" data-amount="301">Ganapathi Homam</option>
+                        <option value="service8" data-amount="751">Kalyanam</option>
+                        <option value="service9" data-amount="1001">Maha Abhishekam</option>
+                        <option value="service10" data-amount="2001">Special Seva</option>
                     </select>
+                </div>
+                
+                <div class="seva-amount" id="sevaAmount" style="display: none;">
+                    <div class="amount-label">Seva Amount:</div>
+                    <div class="amount-value" id="amountValue">$0</div>
                 </div>
             </div>
             
@@ -213,8 +239,56 @@
     </div>
 
     <script>
+        // Check if user is logged in
+        window.onload = function() {
+            const username = sessionStorage.getItem('username');
+            const role = sessionStorage.getItem('role');
+            
+            if (!username || !role) {
+                // Redirect to login if not authenticated
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Display user info
+            const header = document.querySelector('.header');
+            const userInfo = document.createElement('div');
+            userInfo.style.cssText = 'background: #f0f8ff; padding: 10px; border-radius: 8px; margin-bottom: 20px; text-align: right;';
+            userInfo.innerHTML = `<span style="color: #666;">Logged in as: <strong>${username}</strong> (${getRoleName(role)})</span> | <a href="#" onclick="logout()" style="color: #ff6600; text-decoration: none; font-weight: bold;">Logout</a>`;
+            header.appendChild(userInfo);
+        };
+        
+        function getRoleName(role) {
+            const roleNames = {
+                'superadmin': 'Super Admin',
+                'admin': 'Admin',
+                'frontdesk': 'Front Desk'
+            };
+            return roleNames[role] || role;
+        }
+        
+        function logout() {
+            sessionStorage.clear();
+            window.location.href = 'login.html';
+        }
+        
         let familyMemberCount = 0;
         const MAX_FAMILY_MEMBERS = 10;
+        
+        function updateSevaAmount() {
+            const serviceSelect = document.getElementById('service');
+            const selectedOption = serviceSelect.options[serviceSelect.selectedIndex];
+            const amount = selectedOption.getAttribute('data-amount');
+            const sevaAmountDiv = document.getElementById('sevaAmount');
+            const amountValueDiv = document.getElementById('amountValue');
+            
+            if (amount) {
+                amountValueDiv.textContent = `$${amount}`;
+                sevaAmountDiv.style.display = 'block';
+            } else {
+                sevaAmountDiv.style.display = 'none';
+            }
+        }
         
         function addFamilyMember() {
             if (familyMemberCount >= MAX_FAMILY_MEMBERS) {
@@ -257,7 +331,8 @@
                     nakshatra: formData.get('primaryNakshatra')
                 },
                 familyMembers: [],
-                service: formData.get('service')
+                service: formData.get('service'),
+                sevaAmount: document.getElementById('amountValue').textContent
             };
             
             // Collect family members
